@@ -1,6 +1,6 @@
 package com.elastic.contorller;
 
-import java.util.Map;
+import java.io.IOException;
 
 import javax.annotation.PostConstruct;
 
@@ -8,14 +8,16 @@ import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.elasti.container.ClientHolder;
 import com.elastic.model.User;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
@@ -29,6 +31,9 @@ public class UserContorller {
 	@Autowired
 	private ObjectMapper mapper;
 
+	@Autowired
+	private Client client;
+
 	@PostConstruct
 	public void addUser() throws ElasticsearchException,
 			JsonProcessingException {
@@ -40,36 +45,42 @@ public class UserContorller {
 			user.setAge(15 + i);
 			user.setLastName(lastNames[i - 1]);
 			user.setName(names[i - 1]);
-			IndexResponse response = ClientHolder.getClient()
-					.prepareIndex("twitter", "tweet")
+			IndexResponse response = client.prepareIndex("twitter", "tweet")
 					.setSource(mapper.writeValueAsString(user)).execute()
 					.actionGet();
 			System.out.println(response.getId());
 		}
 		searchUser();
 	}
-	
-	public void searchUser(){
-		SearchResponse response=ClientHolder.getClient()
-				.prepareSearch("twitter")
+
+	public void searchUser() {
+		SearchResponse response = client.prepareSearch("twitter")
 				.setSearchType(SearchType.QUERY_AND_FETCH)
-			    .setQuery(QueryBuilders.termQuery("name", "esa"))
-			    .setFrom(0).setSize(60).setExplain(true)
-			    .execute()
-			    .actionGet();
+				.setQuery(QueryBuilders.termQuery("name", "esa")).setFrom(0)
+				.setSize(60).setExplain(true).execute().actionGet();
 		SearchHit[] results = response.getHits().getHits();
 		for (SearchHit hit : results) {
-		  System.out.println("!!!!"+hit.getId());    //prints out the id of the document
-		  Map<String,Object> result = hit.getSource();   //the retrieved document
-		  System.out.println("size "+result.size());
+			try {
+				User user=mapper.readValue(hit.getSourceAsString(), User.class);
+				System.out.println("User: "+user);
+			} catch (JsonParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
 	private void initialize() {
-		if (!ClientHolder.getClient().admin().indices()
-				.prepareExists("twitter").execute().actionGet().isExists())
-			ClientHolder.getClient().admin().indices().prepareCreate("twitter")
-					.execute().actionGet();
+		if (!client.admin().indices().prepareExists("twitter").execute()
+				.actionGet().isExists())
+			client.admin().indices().prepareCreate("twitter").execute()
+					.actionGet();
 
 	}
 }
