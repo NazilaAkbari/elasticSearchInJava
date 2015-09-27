@@ -19,13 +19,22 @@ var UserService = function($http) {
 }
 app.service('UserService', UserService);
 
-var UserCtrl = function(UserSerivce) {
+var UserCtrl = function(UserService) {
 	var vm = this;
 	vm.addUser = function() {
 		UserService.add(vm.newUser).success(function(){
+		});
+	};
+	
+	vm.removeUser=function(){
+		UserService.remove(vm.user).success(function(){
 			
 		});
 	};
+	
+	vm.editUser =function(){
+		
+	};
 }
 
-app.controller('UuserCtrl', UserCtrl);
+app.controller('UserCtrl', UserCtrl);
