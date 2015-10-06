@@ -67,10 +67,10 @@ public class UserService {
 
 	public List<User> search(String searchParam) throws JsonParseException,
 			JsonMappingException, IOException {
-		/*MultiMatchQueryBuilder multiMatchQuery = QueryBuilders.multiMatchQuery(
-				searchParam, "_all");*/
-		MatchAllQueryBuilder multiMatchQuery = QueryBuilders.matchAllQuery();
-		SearchResponse response = client.prepareSearch("user")
+		MultiMatchQueryBuilder multiMatchQuery = QueryBuilders.multiMatchQuery(
+				searchParam, "_all");
+/*		MatchAllQueryBuilder multiMatchQuery = QueryBuilders.matchAllQuery();
+*/		SearchResponse response = client.prepareSearch("user")
 				.setSearchType(SearchType.QUERY_AND_FETCH)
 				.setQuery(multiMatchQuery).setFrom(0).setSize(60)
 				.setExplain(true).execute().actionGet();

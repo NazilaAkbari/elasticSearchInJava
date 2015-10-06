@@ -7,7 +7,8 @@ var UserService = function($http) {
 
 		},
 		add : function(user) {
-			return $http({url:"/user", method:"PUT",params:{user}});
+			console.log(user);
+			return $http.put("/user",user);
 		},
 		remove : function(user) {
 

@@ -6,6 +6,7 @@ import java.util.List;
 import org.elasticsearch.client.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,7 +32,7 @@ public class UserContorller {
 
 	@RequestMapping(method = RequestMethod.PUT)
 	@ResponseBody
-	public void addUser(User user) {
+	public void addUser(@RequestBody User user) {
 		userService.addUser(user);
 	}
 
