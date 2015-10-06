@@ -7,13 +7,16 @@ var UserService = function($http) {
 
 		},
 		add : function(user) {
-			return $http.put("/user", user);
+			return $http({url:"/user", method:"PUT",params:{user}});
 		},
 		remove : function(user) {
 
 		},
 		edit : function(user) {
 
+		},
+		search:function(searchParam){
+			return $http({url:"/user", method:"GET",params:{searchParam}});
 		}
 	};
 }
@@ -34,6 +37,11 @@ var UserCtrl = function(UserService) {
 	
 	vm.editUser =function(){
 		
+	};
+	
+	vm.search=function(){
+		UserService.search(vm.searchParam).success(function(){
+		});
 	};
 }
 

@@ -1,7 +1,6 @@
 <html>
 <head>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.4/angular.min.js"></script>
+<script type="text/javascript" src="/lib/angular.min.js"></script>
 <script type="text/javascript" src="/userManagementApp.js"></script>
 
 </head>
@@ -14,12 +13,10 @@
 			<button ng-click="userCtrl.addUser()">Add User</button>
 
 		</form>
-		<br>
-		<br>
+		<br> <br>
 		<div>
-			<label>name: </label><input id="nameS" /> <label>lastName: </label><input
-				id="lastNameS" /> <label>age: </label><input id="ageS" />
-			<button>Search</button>
+			<input ng-model="userCtrl.searchParam" />
+			<button ng-click="userCtrl.search()">Search</button>
 			<table>
 				<tr>
 					<th>name</th>
