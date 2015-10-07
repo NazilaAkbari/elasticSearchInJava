@@ -30,13 +30,20 @@ public class UserContorller {
 	@Autowired
 	private UserService userService;
 
+	@RequestMapping(method = RequestMethod.GET)
+	@ResponseBody
+	public List<User> getAll() throws JsonParseException, JsonMappingException,
+			IOException {
+		return userService.getAll();
+	}
+
 	@RequestMapping(method = RequestMethod.PUT)
 	@ResponseBody
 	public void addUser(@RequestBody User user) {
 		userService.addUser(user);
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
 	public List<User> search(@RequestParam String searchParam)
 			throws JsonParseException, JsonMappingException, IOException {

@@ -4,10 +4,9 @@ var app = angular.module('userManagementApp', []);
 var UserService = function($http) {
 	return {
 		getAll : function() {
-
+			return $http.get("/user");
 		},
 		add : function(user) {
-			console.log(user);
 			return $http.put("/user",user);
 		},
 		remove : function(user) {
@@ -17,7 +16,7 @@ var UserService = function($http) {
 
 		},
 		search:function(searchParam){
-			return $http({url:"/user", method:"GET",params:{searchParam}});
+			return $http.post("/user",searchParam);
 		}
 	};
 }
@@ -25,8 +24,16 @@ app.service('UserService', UserService);
 
 var UserCtrl = function(UserService) {
 	var vm = this;
+	
+	 angular.element(document).ready(function () {
+		 UserService.getAll().success(function(result){
+			 vm.users=result;
+		 });
+	    });
+	
 	vm.addUser = function() {
 		UserService.add(vm.newUser).success(function(){
+			vm.newUser=null;
 		});
 	};
 	
@@ -41,7 +48,9 @@ var UserCtrl = function(UserService) {
 	};
 	
 	vm.search=function(){
-		UserService.search(vm.searchParam).success(function(){
+		UserService.search(vm.searchParam).success(function(result){
+		vm.users=result;
+		vm.searchParam=null;
 		});
 	};
 }

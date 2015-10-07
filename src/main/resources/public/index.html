@@ -23,6 +23,11 @@
 					<th>lastName</th>
 					<th>age</th>
 				</tr>
+				<tr ng-repeat="user in userCtrl.users">
+				<td>{{user.name}}</td>
+				<td>{{user.lastName}}</td>
+				<td>{{user.age}}</td>
+				</tr>
 			</table>
 		</div>
 	</div>

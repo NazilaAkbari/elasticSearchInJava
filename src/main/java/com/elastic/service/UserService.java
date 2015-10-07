@@ -51,28 +51,31 @@ public class UserService {
 	 * 
 	 * client.prepareDelete("twitter", "tweet",user.getId()). }
 	 * 
-	 * public void searchUser() { SearchResponse response =
-	 * client.prepareSearch("twitter")
-	 * .setSearchType(SearchType.QUERY_AND_FETCH)
-	 * .setQuery(QueryBuilders.termQuery("name", "esa")).setFrom(0)
-	 * .setSize(60).setExplain(true).execute().actionGet(); SearchHit[] results
-	 * = response.getHits().getHits(); for (SearchHit hit : results) { try {
-	 * User user=mapper.readValue(hit.getSourceAsString(), User.class);
-	 * System.out.println("User: "+user); } catch (JsonParseException e) { //
-	 * TODO Auto-generated catch block e.printStackTrace(); } catch
-	 * (JsonMappingException e) { // TODO Auto-generated catch block
-	 * e.printStackTrace(); } catch (IOException e) { // TODO Auto-generated
-	 * catch block e.printStackTrace(); } } }
+	
 	 */
 
 	public List<User> search(String searchParam) throws JsonParseException,
 			JsonMappingException, IOException {
 		MultiMatchQueryBuilder multiMatchQuery = QueryBuilders.multiMatchQuery(
 				searchParam, "_all");
-/*		MatchAllQueryBuilder multiMatchQuery = QueryBuilders.matchAllQuery();
-*/		SearchResponse response = client.prepareSearch("user")
+		SearchResponse response = client.prepareSearch("user")
 				.setSearchType(SearchType.QUERY_AND_FETCH)
 				.setQuery(multiMatchQuery).setFrom(0).setSize(60)
+				.setExplain(true).execute().actionGet();
+		SearchHit[] results = response.getHits().getHits();
+		List<User> users = new ArrayList<User>();
+		for (SearchHit hit : results) {
+			User user = mapper.readValue(hit.getSourceAsString(), User.class);
+			users.add(user);
+		}
+		return users;
+	}
+	
+	public List<User> getAll() throws JsonParseException, JsonMappingException, IOException{
+		MatchAllQueryBuilder matchAllQuery = QueryBuilders.matchAllQuery();
+		SearchResponse response = client.prepareSearch("user")
+				.setSearchType(SearchType.QUERY_AND_FETCH)
+				.setQuery(matchAllQuery).setFrom(0).setSize(60)
 				.setExplain(true).execute().actionGet();
 		SearchHit[] results = response.getHits().getHits();
 		List<User> users = new ArrayList<User>();
