@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.lucene.util.QueryBuilder;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -66,7 +65,9 @@ public class UserService {
 		List<User> users = new ArrayList<User>();
 		for (SearchHit hit : results) {
 			User user = mapper.readValue(hit.getSourceAsString(), User.class);
+			user.setId(hit.getId());
 			users.add(user);
+			
 		}
 		return users;
 	}

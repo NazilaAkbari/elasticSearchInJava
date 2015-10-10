@@ -24,16 +24,18 @@ app.service('UserService', UserService);
 
 var UserCtrl = function(UserService) {
 	var vm = this;
-	
-	 angular.element(document).ready(function () {
-		 UserService.getAll().success(function(result){
+	var getAll = function(){
+		UserService.getAll().success(function(result){
 			 vm.users=result;
 		 });
-	    });
+		};
+	
+		 getAll();
 	
 	vm.addUser = function() {
 		UserService.add(vm.newUser).success(function(){
 			vm.newUser=null;
+			setTimeout(getAll,1000);
 		});
 	};
 	
@@ -50,7 +52,6 @@ var UserCtrl = function(UserService) {
 	vm.search=function(){
 		UserService.search(vm.searchParam).success(function(result){
 		vm.users=result;
-		vm.searchParam=null;
 		});
 	};
 }
