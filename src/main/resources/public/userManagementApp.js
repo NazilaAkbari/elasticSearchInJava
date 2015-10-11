@@ -9,8 +9,9 @@ var UserService = function($http) {
 		add : function(user) {
 			return $http.put("/user",user);
 		},
-		remove : function(user) {
-
+		remove : function(id) {
+			console.log(id);
+			return $http.delete("/user",{params: {id: id}});
 		},
 		edit : function(user) {
 
@@ -39,9 +40,9 @@ var UserCtrl = function(UserService) {
 		});
 	};
 	
-	vm.removeUser=function(){
-		UserService.remove(vm.user).success(function(){
-			
+	vm.removeUser=function(id){
+		UserService.remove(id).success(function(){
+			setTimeout(getAll,1000);
 		});
 	};
 	
