@@ -3,12 +3,15 @@ package com.elastic.contorller;
 import java.io.IOException;
 import java.util.List;
 
+
+
 import org.elasticsearch.client.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.elastic.model.User;
@@ -51,9 +54,9 @@ public class UserContorller {
 
 	@RequestMapping(method = RequestMethod.DELETE)
 	@ResponseBody
-	public void removeUser(User user) {
-		userService.addUser(user);
-		System.out.println("added" + user.getId());
+	public void removeUser(@RequestParam String id) {
+		userService.deleteUser(id);
+		System.out.println("added" + id);
 	}
 
 }

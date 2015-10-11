@@ -45,18 +45,17 @@ public class UserService {
 		}
 	}
 
-	/*
-	 * public void deleteUser(User user){ long id=user.getId()
-	 * 
-	 * client.prepareDelete("twitter", "tweet",user.getId()). }
-	 * 
-	
-	 */
+	public void deleteUser(String id) {
+		client.prepareDelete("user", "info", id).execute().actionGet();
+	}
+
 
 	public List<User> search(String searchParam) throws JsonParseException,
 			JsonMappingException, IOException {
 		MultiMatchQueryBuilder multiMatchQuery = QueryBuilders.multiMatchQuery(
-				searchParam, "_all");
+				searchParam, "_all").type(
+				MultiMatchQueryBuilder.Type.PHRASE_PREFIX);
+		;
 		SearchResponse response = client.prepareSearch("user")
 				.setSearchType(SearchType.QUERY_AND_FETCH)
 				.setQuery(multiMatchQuery).setFrom(0).setSize(60)
@@ -67,12 +66,13 @@ public class UserService {
 			User user = mapper.readValue(hit.getSourceAsString(), User.class);
 			user.setId(hit.getId());
 			users.add(user);
-			
+
 		}
 		return users;
 	}
-	
-	public List<User> getAll() throws JsonParseException, JsonMappingException, IOException{
+
+	public List<User> getAll() throws JsonParseException, JsonMappingException,
+			IOException {
 		MatchAllQueryBuilder matchAllQuery = QueryBuilders.matchAllQuery();
 		SearchResponse response = client.prepareSearch("user")
 				.setSearchType(SearchType.QUERY_AND_FETCH)
@@ -82,6 +82,7 @@ public class UserService {
 		List<User> users = new ArrayList<User>();
 		for (SearchHit hit : results) {
 			User user = mapper.readValue(hit.getSourceAsString(), User.class);
+			user.setId(hit.getId());
 			users.add(user);
 		}
 		return users;

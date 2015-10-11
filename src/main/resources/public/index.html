@@ -22,11 +22,15 @@
 					<th>name</th>
 					<th>lastName</th>
 					<th>age</th>
+					<th>Delete</th>
+					<th>Edit</th>
 				</tr>
 				<tr ng-repeat="user in userCtrl.users">
 				<td>{{user.name}}</td>
 				<td>{{user.lastName}}</td>
 				<td>{{user.age}}</td>
+				<td ng-hide="true">{{user.id}}</td>
+				<td><button ng-click="userCtrl.removeUser(user.id)">Delete</button></td>
 				</tr>
 			</table>
 		</div>
